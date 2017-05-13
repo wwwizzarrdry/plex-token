@@ -1,0 +1,352 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Plex Token</title>
+	<link rel="css/stylesheet" href="reset.css"/>
+	<link rel="css/stylesheet" href="main.css"/>
+	<style>
+	body {
+	    font-family: Arial, Helvetica, sans-serif;
+		text-align: center;
+		font-size: 14px;
+		color: #cc7b19;
+		background-color: #464646;
+		background-image: url(default_bg.png);
+		background-position: center center;
+        background-repeat: no-repeat;
+		background-attachment: fixed;
+		background-size: cover;
+	}
+	.modal {
+		display: none; /* Hidden by default */
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: hidden; /* Enable scroll if needed */
+		background-color: rgb(0,0,0); /* Fallback color */
+		background-color: rgba(0,0,0,0.8); /* Black w/ opacity */
+	}
+	a {
+	    cursor: pointer;
+		color: #999;
+		padding: 4px;
+		text-decoration: none;
+	}
+	a:hover {
+		color: #e5e5e5;
+		background: #151515;
+	}
+	.info{
+	    cursor: pointer;
+	}
+	.info:hover{
+	    background: #151515;
+	}
+	div.help {
+		color: #7d592f;
+	    opacity: 0;
+		width: 600px;
+		text-align: left;
+		padding: 25px;
+		background: #101010;
+		line-height: 28px;
+		position: fixed;
+		z-index: -1;
+		margin-left: calc( 50% - 340px);
+		box-shadow: inset 0px 0px 3px 1px #555;
+		transition: all 0.56s ease-in-out;
+		transform: scale(0.1);
+	}
+	div.help a {
+	    color: #fff;
+	    background: #f7332e;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		width: 25px;
+		height: 25px;
+		text-align: center;
+		padding: 2px;
+        line-height: 25px;
+		z-index: 2;
+	}
+	.message{
+	    text-align: left;
+        margin-left: calc( 50% - 300px );
+	}
+	code {
+		color: #1a1a1a;
+		background: #cc7b19;
+		padding: 2px;
+		border-radius: 5px;
+	}
+	code a { color: #1a1a1a; }
+	pre {
+	    width: 600px;
+		color: #cc7b19;
+		background: #1a1a1a;
+		padding: 2px;
+	}
+	label{
+		display: block;
+		font-size: 24px;
+		color: #e0e0e0;
+	}
+	input {
+		border: 1px solid #555;
+		border-radius: 8px;
+		height:32px;
+		line-height: 32px;
+		text-align: center;
+		font-size: 28px;
+		color: #353535;
+		padding: 6px;
+		-webkit-box-shadow: inset 2px 2px 2px 0px #555;
+        -moz-box-shadow: inset 2px 2px 2px 0px #555;
+        box-shadow: inset 2px 2px 2px 0px #555;
+	}
+	input:active, input:focus {
+	    outline: none;
+	    border:1px solid #555;
+	}
+	button {
+		border: none;
+		border-radius: 8px;
+		font-size: 18px;
+		color: #cc7b19;
+		padding: 6px;
+		background:#464646;
+	}
+	.device-list {
+		width: 550px;
+		background:#464646;
+		list-style-type: none;
+	}
+	.device-list li {
+	    cursor: pointer;
+		background: rgba(0,0,0,0.6);
+		border-bottom: 1px solid #555;
+		padding:10px;
+		transition: all 0.56s ease-in-out;
+	}
+	.device-list:hover li {
+		opacity: 0.6;
+	}
+	.device-list li:hover {
+		opacity: 1;
+		box-shadow: 0px 4px 16px -4px #000;
+		transform: scale(1.01);
+	}
+	.key {
+	   color: #1a1a1a;
+       background: rgba(216, 143, 55, 0.67);
+       padding: 2px;
+       border-radius: 1px;
+       line-height: 24px
+	}
+</style>
+</head>
+<body>
+	<div class="modal"></div>
+	<div class="wrapper">
+		<div class="main">
+			<div class="info">
+				<h1 class="title" title="Click to show details">Plex Token</h1>
+				<div class="help">
+					<a id="" href="" class="close">X</a>
+					<p>
+					    Do a HTTP POST request to <code>https://plex.tv/users/sign_in.json</code>
+						with <i>user[login]</i> and <i>user[password]</i> form values in the body.<br><br>
+						
+						For example: <code>user%5Blogin%5D=plexusername&user%5Bpassword%5D=myplexpassword</code><br><br>
+						
+						Set these headers:<br>
+						HTTP header: <code>X-Plex-Client-Identifier</code>: a unique value for your client<br>
+						HTTP header: <code>X-Plex-Product</code>: the name of your client<br>
+						HTTP header: <code>X-Plex-Version</code>: the version of your client<br><br>
+						
+						Upon success, you will get back a JSON formatted response that contains a token you can use with other requests to the Plex Media Server. 
+						This token must be sent as a HTTP header (X-Plex-Token).<br>
+						Your registered client will be listed under <strong>"Devices"</strong>.
+					</p>
+				</div>
+			</div>
+			<div class="container">
+				<form action="https://plex.tv/users/sign_in.json" method="post">
+					<label for="user_login">user[login]</label><br>
+					<input id="user_login" name="user[login]" value="wwwizzarrdry"/><br><br>
+					<label for="user_password">user[password]</label><br>
+					<input id="user_password" name="user[password]" value="bobdylan21" type="password"/><br><br>
+					<button id="getToken" class="button" type="submit">Get Token</button>
+				</form>
+				</a><br>
+				<a id="clearLocalStorage" href="#" class="">Clear Saved Response</a>
+			</div> 
+		</div>
+		<div class="header"></div>
+		<div class="message"></div>
+		<div class="footer"></div>
+	</div>
+	<script src="jquery.js"></script>
+	<script type="text/javascript">
+		var plexinfo = ($.type(localStorage.getItem("plexinfo")) !== 'null') ? localStorage.getItem("plexinfo") : "";
+		$(function(){
+		
+			if (plexinfo.length > 0) {
+			
+				plexinfo = JSON.parse(plexinfo);
+				console.log("plexinfo", plexinfo)
+				
+				var client_id = null,
+					auth_token = plexinfo.user.authToken,
+					url = "https://plex.tv/api/resources.xml?auth_token=" + auth_token,
+					username = plexinfo.user.username;
+					
+				$("form").hide();	
+				$(".message").html("<pre>Plexinfo: " + syntaxHighlight(JSON.stringify(plexinfo, null, 2)) + "</pre>")
+				$(".header").html("<br><br>user.authToken: <code>" + auth_token + "</code><br><br>" +
+				   "clientIdentifier Url: <code><a id='clientIdentifier' href='" + url + "'>" + url + "</a></code><br><br>");
+				   
+				getDeviceList(url, auth_token)	
+				
+			} else {
+				$("form").show();
+			}
+		
+			// Register events
+			$(document).on("click", ".info, a.close", function(e){
+			   e.preventDefault();
+			   var opacity = $(".help").css("opacity");	   
+			   (opacity > 0) ? $("div.help").css({"opacity":0, "z-index":-1, "transform":"scale(0.1)"}) && $(".modal").fadeOut() : $(".help").css({"opacity":1, "z-index":2, "transform":"scale(1)"}) && $(".modal").fadeIn();
+			});
+			
+			//
+			$(document).on("click", "#clearLocalStorage", function(e){
+				e.preventDefault();
+				var r = confirm("Clear LocalStorage?\r\n" + JSON.stringify(plexinfo, null, 2));
+				if (r == true) {
+					localStorage.removeItem("plexinfo");
+					window.location.reload();
+				}
+			});
+			
+			//
+			$(document).on("click", "#getToken", function(e){
+				e.preventDefault();
+				var form = $('form');
+				var formdata = form.serialize();
+				var url = 'https://plex.tv/users/sign_in.json';
+				getPlexInfo(formdata, url)	
+			});
+			
+			//
+			$(document).on("click", ".device-list li", function(e){
+				alert("Nodejs: " + $(this).attr("data-nodejs"));
+				
+			});
+			
+			// Get user authToken
+			function getPlexInfo(formdata, url) {
+				$.ajax({
+					type: 'POST',
+					url: url,
+					processData: false,
+					data: formdata,
+					headers: {
+					    "X-Plex-Client-Identifier":"Test script",
+						"X-Plex-Product":"Test script 3565465",
+						"X-Plex-Version":"0.001"
+					},
+					beforeSend: function(request) {
+					    /*
+						request.setRequestHeader("X-Plex-Client-Identifier", "Test script");
+						request.setRequestHeader("X-Plex-Product", "Test script 3565465");
+						request.setRequestHeader("X-Plex-Version", "0.001");
+						*/
+					},
+					success: function(res){
+						localStorage.setItem("plexinfo", JSON.stringify(res));
+						$("form").fadeOut();
+						$(".message").html("<pre>Success: " + syntaxHighlight(JSON.stringify(res, null, 2)) + "</pre>")
+						$(".header").html("<br><br>user.authToken: <code>" + auth_token + "</code><br><br>" +
+							"clientIdentifier Url: <code><a id='clientIdentifier' href='" + url + "'>" + url + "</a></code><br><br>");
+					},
+					error: function(err){
+						localStorage.removeItem("plexinfo");
+						$(".message").html("<pre>Error: " + syntaxHighlight(JSON.stringify(res, null, 2)) + "</pre>")
+					}
+				}).done(function(res) {
+					var auth_token = res.user.authToken,
+					url = "https://plex.tv/api/resources.xml?auth_token=" + auth_token;				
+					getDeviceList(url, auth_token)
+				});
+			}
+			
+			// Parse Devices
+			var $deviceList;
+			function getDeviceList(url, auth_token) {
+				$.ajax({
+					type: 'GET',
+					url: url,
+					dataType: "xml",
+					headers: {
+						"X-Plex-Token":auth_token
+					},
+					success: function(xml) {
+					
+					    $deviceList = $("<ul class='device-list'></ul>");
+						console.log("PlexClient XML", xml);						
+						//alert($(xml).find("MediaContainer").attr("size") + " devices found");
+						
+						$deviceList.before("<h3>" + $(xml).find("MediaContainer").attr("size") + " devices found</h3>");
+						$(xml).find("Device").each(function(){					
+							var name = $(this).attr("name");
+							var clientIdentifier = $(this).attr("clientIdentifier");
+							var owned = $(this).attr("owned");
+							var accessToken = $(this).attr("accessToken");
+							var platform = $(this).attr("platform");
+							$deviceList.append("<li data-nodejs='TOKEN="+accessToken+" PLAYER="+clientIdentifier+" node index.js' data-name='" + name + "' data-clientIdentifier='" + clientIdentifier + "'data-owned='" + owned + "' data-accessToken='" + accessToken + "' data-platform='" + platform + "'>" +
+								"<span>Name:</span> " + name + "<br>" +
+								"<span>Owned:</span> " + owned + "<br>" +
+								"<span>Platform:</span> " + platform + "<br>" +
+								"<span>clientIdentifier:</span> " + clientIdentifier + "<br>" +
+								"</li>");
+						});					
+					}
+				}).done(function(){
+					$(".message").prepend($deviceList);
+				});	
+			}
+			
+			// Pretty it up
+			function syntaxHighlight(json) {
+				if (typeof json != 'string') {
+					 json = JSON.stringify(json, undefined, 2);
+				}
+				json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+				return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+					var cls = 'number';
+					if (/^"/.test(match)) {
+						if (/:$/.test(match)) {
+							cls = 'key';
+						} else {
+							cls = 'string';
+						}
+					} else if (/true|false/.test(match)) {
+						cls = 'boolean';
+					} else if (/null/.test(match)) {
+						cls = 'null';
+					}
+					return '<span class="' + cls + '">' + match + '</span>';
+				});
+			};
+		});
+	</script>
+</body>
+</html>
