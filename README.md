@@ -4,7 +4,10 @@ In order to run this app:
 - Clone the repository.
 - Install dependencies using `npm install`.
 - Get an API token using [these instructions](https://forums.plex.tv/discussion/129922/how-to-request-a-x-plex-token-token-for-your-app/p1).
+*New just open index.html to get your authToken.
+
 - Figure out the identifier of the player you want to control by hitting https://plex.tv/api/resources.xml?auth_token=api-token and grab the `clientIdentifier` value for the player.
+* New index.html will grab a list of your clients as well
 
 Then run the app as follows:
 
